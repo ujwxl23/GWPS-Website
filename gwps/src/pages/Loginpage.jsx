@@ -21,8 +21,8 @@ const LoginPage = () => {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    const adminEmail = process.env.VITE_ADMIN_EMAIL;
-    const adminPassword = process.env.VITE_ADMIN_PASSWORD;
+    const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
+    const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
 
     if (email === adminEmail && password === adminPassword) {
       setError("");
