@@ -22,7 +22,7 @@ const UploadPage = () => {
   const [allImages, setAllImages] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const API = process.env.REACT_APP_API_URL;
+  const API = process.env.VITE_API_URL;
 
   const fetchImages = async () => {
     try {

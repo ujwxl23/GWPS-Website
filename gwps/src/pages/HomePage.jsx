@@ -77,7 +77,7 @@ const HomePage = () => {
   const [updates, setUpdates] = useState([]);
   const [notices, setNotices] = useState([]);
 
-  const API = process.env.REACT_APP_API_URL;
+  const API = process.env.VITE_API_URL;
 
   useEffect(() => {
     const interval = setInterval(() => {

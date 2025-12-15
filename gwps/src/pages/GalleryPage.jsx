@@ -13,7 +13,7 @@ const GalleryPage = () => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const API = process.env.REACT_APP_API_URL;
+  const API = process.env.VITE_API_URL;
 
   // Fetch images from backend (Cloudinary)
   const fetchImages = async () => {
