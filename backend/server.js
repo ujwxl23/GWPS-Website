@@ -29,9 +29,16 @@ const upload = multer({ storage: multer.memoryStorage() });
 // Upload image to Cloudinary
 app.post("/upload", upload.single("image"), async (req, res) => {
   try {
+    console.log("Upload request received");
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
+
+    console.log("File info:", {
+      name: req.file.originalname,
+      size: req.file.size,
+      type: req.file.mimetype,
+    });
 
     const uploadFromBuffer = () =>
       new Promise((resolve, reject) => {
@@ -47,6 +54,8 @@ app.post("/upload", upload.single("image"), async (req, res) => {
       });
 
     const result = await uploadFromBuffer();
+
+    console.log("Cloudinary upload success:", result.secure_url);
 
     // const imageData = {
     //   url: result.secure_url,
@@ -65,6 +74,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
       public_id: result.public_id,
     });
 
+    console.log("Saved in MongoDB:", savedImage);
     res.json({ message: "Upload successful", image: savedImage });
 
   } catch (err) {
@@ -84,6 +94,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
 // Get all images
 app.get("/images", async (req, res) => {
   const images = await Image.find().sort({ createdAt: 1 });
+  console.log(`Images called — found ${images.length} images`);
   res.json({ images });
 });
 

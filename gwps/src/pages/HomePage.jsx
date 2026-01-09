@@ -101,8 +101,10 @@ const HomePage = () => {
   // Fetch first 6 images from backend
   const fetchImages = async () => {
     try {
+      console.log("Homepage fetching images from:", `${API}/images`);
       const res = await fetch(`${API}/images`);
       const data = await res.json();
+      console.log("Homepage images response:", data);
       console.log(data);
 
       // Take last 6 images

@@ -6,4 +6,4 @@ const imageSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-export default mongoose.model("Image", imageSchema);
+export default mongoose.model("ImageGWPS", imageSchema);

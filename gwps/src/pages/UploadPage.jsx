@@ -26,8 +26,10 @@ const UploadPage = () => {
 
   const fetchImages = async () => {
     try {
+      console.log("UploadPage fetching images from:", `${API}/images`);
       const res = await fetch(`${API}/images`);
       const data = await res.json();
+      console.log("Images API response:", data);
       setAllImages(data.images || []);
     } catch (err) {
       console.error("Error fetching images:", err);
@@ -41,15 +43,22 @@ const UploadPage = () => {
   const handleUpload = async () => {
     if (!selectedFile) return alert("Please select an image");
 
+    console.log("Upload started:", selectedFile);
     const formData = new FormData();
     formData.append("image", selectedFile);
 
     setLoading(true);
     try {
-      await fetch(`${API}/upload`, {
+      const res = await fetch(`${API}/upload`, {
         method: "POST",
         body: formData,
       });
+
+      console.log("Upload response status:", res.status);
+
+      const data = await res.json();
+      console.log("Upload response data:", data);
+
       setSelectedFile(null);
       fetchImages();
     } catch (err) {
@@ -59,14 +68,22 @@ const UploadPage = () => {
   };
 
   const handleDelete = async (id) => {
-    try {
-      await fetch(`${API}/images/${id}`, {
-        method: "DELETE",
-      });
-      fetchImages();
-    } catch (err) {
-      console.error("Delete error:", err);
-    }
+     console.log("Delete request for id:", id);
+
+     try {
+       const res = await fetch(`${API}/images/${id}`, {
+         method: "DELETE",
+       });
+
+       console.log("Delete response status:", res.status);
+
+       const data = await res.json();
+       console.log("Delete response data:", data);
+
+       fetchImages();
+     } catch (err) {
+       console.error("Delete error:", err);
+     }
   };
 
   /* ================= HOMEPAGE CONTENT STATE ================= */

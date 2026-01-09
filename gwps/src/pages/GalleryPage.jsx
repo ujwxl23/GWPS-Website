@@ -18,8 +18,10 @@ const GalleryPage = () => {
   // Fetch images from backend (Cloudinary)
   const fetchImages = async () => {
     try {
+      console.log("Fetching images from:", `${API}/images`);
       const res = await fetch(`${API}/images`);
       const data = await res.json();
+      console.log("Images API response:", data);
       setImages(data.images || []);
     } catch (err) {
       console.error("Error fetching images:", err);
