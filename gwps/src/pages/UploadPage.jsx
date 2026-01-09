@@ -58,9 +58,9 @@ const UploadPage = () => {
     setLoading(false);
   };
 
-  const handleDelete = async (public_id) => {
+  const handleDelete = async (id) => {
     try {
-      await fetch(`${API}/images/${public_id}`, {
+      await fetch(`${API}/images/${id}`, {
         method: "DELETE",
       });
       fetchImages();
@@ -150,7 +150,7 @@ const UploadPage = () => {
                 <Typography noWrap>{img.public_id}</Typography>
                 <IconButton
                   color="error"
-                  onClick={() => handleDelete(img.public_id)}
+                  onClick={() => handleDelete(img._id)}
                 >
                   <DeleteIcon />
                 </IconButton>

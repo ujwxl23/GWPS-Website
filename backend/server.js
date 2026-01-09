@@ -5,18 +5,18 @@ import fs from "fs";
 import dotenv from "dotenv";
 import { v2 as cloudinary } from "cloudinary";
 import streamifier from "streamifier";
+import mongoose from "mongoose";
+import Image from "./models/Image.js";
 
 dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// const storage = multer.diskStorage({
-//   destination: "./uploads",
-//   filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
-// });
-
-// const upload = multer({ storage });
+  mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("Mongo error:", err));
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -25,8 +25,6 @@ cloudinary.config({
 });
 
 const upload = multer({ storage: multer.memoryStorage() });
-
-// app.use("/uploads", express.static("uploads"));
 
 // Upload image to Cloudinary
 app.post("/upload", upload.single("image"), async (req, res) => {
@@ -50,17 +48,25 @@ app.post("/upload", upload.single("image"), async (req, res) => {
 
     const result = await uploadFromBuffer();
 
-    const imageData = {
+    // const imageData = {
+    //   url: result.secure_url,
+    //   public_id: result.public_id,
+    // };
+
+    // imageStore.push(imageData);
+
+    // res.json({
+    //   message: "Upload successful",
+    //   image: imageData,
+    // });
+
+    const savedImage = await Image.create({
       url: result.secure_url,
       public_id: result.public_id,
-    };
-
-    imageStore.push(imageData);
-
-    res.json({
-      message: "Upload successful",
-      image: imageData,
     });
+
+    res.json({ message: "Upload successful", image: savedImage });
+
   } catch (err) {
     console.error("Upload error:", err);
     res.status(500).json({ error: "Upload failed" });
@@ -68,21 +74,43 @@ app.post("/upload", upload.single("image"), async (req, res) => {
 });
 
 // Get all images
-let imageStore = [];
 
-app.get("/images", (req, res) => {
-  res.json({ images: imageStore });
+// let imageStore = [];
+
+// app.get("/images", (req, res) => {
+//   res.json({ images: imageStore });
+// });
+
+// Get all images
+app.get("/images", async (req, res) => {
+  const images = await Image.find().sort({ createdAt: 1 });
+  res.json({ images });
 });
 
 // Delete image
-app.delete("/images/:public_id", async (req, res) => {
+// app.delete("/images/:public_id", async (req, res) => {
+//   try {
+//     const { public_id } = req.params;
+//     await cloudinary.uploader.destroy(public_id);
+//     imageStore = imageStore.filter((img) => img.public_id !== public_id);
+//     res.json({ message: "Deleted successfully" });
+//   } catch (err) {
+//     console.error("Delete error:", err);
+//     res.status(500).json({ error: "Delete failed" });
+//   }
+// });
+
+// Delete image
+app.delete("/images/:id", async (req, res) => {
   try {
-    const { public_id } = req.params;
-    await cloudinary.uploader.destroy(public_id);
-    imageStore = imageStore.filter((img) => img.public_id !== public_id);
+    const image = await Image.findById(req.params.id);
+    if (!image) return res.status(404).json({ error: "Not found" });
+
+    await cloudinary.uploader.destroy(image.public_id);
+    await image.deleteOne();
+
     res.json({ message: "Deleted successfully" });
   } catch (err) {
-    console.error("Delete error:", err);
     res.status(500).json({ error: "Delete failed" });
   }
 });

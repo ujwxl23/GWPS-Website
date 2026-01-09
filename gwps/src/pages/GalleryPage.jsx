@@ -50,7 +50,7 @@ const GalleryPage = () => {
         ) : (
           <Grid container spacing={3}>
             {images.map((img) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={img.public_id}>
+              <Grid item xs={12} sm={6} md={4} lg={3} key={img._id}>
                 <Card
                   sx={{
                     borderRadius: 2,
